@@ -103,7 +103,18 @@
   .meas-calc .warn { color: var(--huom); }
   .meas-calc:empty { display: none; }
   .add-row-btn { width: 100%; padding: 10px; border-radius: 8px; border: 1.5px dashed var(--line); background: transparent; color: var(--navy-2); font-family: var(--font-body); font-size: 13px; font-weight: 700; }
-  .add-own { padding: 12px 14px; }
+  .sec-head { display: flex; align-items: baseline; gap: 6px; margin-bottom: 10px; }
+  .sec-head h3 { margin: 0; }
+  .sub-label { font-size: 11px; font-weight: 700; color: var(--ink-soft); letter-spacing: 0.3px; text-transform: uppercase; margin: 12px 0 6px; }
+  .sub-label.sep { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 14px; }
+  .hav { border-top: 1px solid var(--line); padding: 12px 0 10px 10px; border-left: 3px solid transparent; }
+  .hav.filled { border-left-color: var(--orange); }
+  .hav.sub { margin: 10px 0 0 4px; padding: 10px 0 6px 10px; border-top: 1px dashed var(--line); border-left: 3px solid var(--line); }
+  .hav.sub.filled { border-left-color: var(--yellow); }
+  .item-text .hav-num { flex: 0 0 auto; padding-top: 8px; font-family: var(--font-head); font-weight: 700; font-size: 16px; color: var(--navy-2); }
+  .hav .item-text button { padding-top: 8px; }
+  .add-sub-btn { margin-top: 10px; background: none; border: 1px dashed var(--line); border-radius: 16px; padding: 6px 12px; color: var(--navy-2); font-family: var(--font-body); font-size: 12.5px; font-weight: 700; }
+  .doc-blk-item.sub { margin-left: 14px; font-weight: 600; }
 
   .bottombar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); background: var(--surface); border-top: 1px solid var(--line); display: flex; gap: 10px; max-width: 640px; margin: 0 auto; }
   .btn { flex: 1; padding: 13px; border-radius: 9px; border: none; font-family: var(--font-body); font-weight: 700; font-size: 14.5px; }
@@ -161,56 +172,24 @@
 (function(){
   "use strict";
 
-  var APP_VERSION = "2026-11-12 (muistio v1)";
+  var APP_VERSION = "2026-11-13 (muistio v2, yleistarkastus)";
   var MAX_PHOTOS = 12;
 
-  /* Tarkastuskohdat: samat kuin AKK-pöytäkirjassa, mutta jokainen kohta on vapaa tekstikenttä */
-  var CHAPTERS = [
-    { id:"c6", num:"6", name:"Perustukset, alapohja ja rakennuksen vierusta", items:[
-      "Sokkeli ja tasoerot", "Maanpintojen muotoilu ja rakennuksen sijainti", "Sadevesien poisjohtaminen",
-      "Salaojat ja tarkastuskaivot", "Portaat, kaiteet, luiskat, terassit", "Alapohja", "Maan vastaiset seinärakenteet",
-      "Ryömintätila (tuuletus, korkeus, orgaaninen roska, lammikot)" ]},
-    { id:"c7", num:"7", name:"Ulkoseinät ja julkisivut", items:[
-      "Julkisivuverhous", "Ulkoseinärunko ja sisäpuoliset havainnot", "Parvekkeet ja terassit" ]},
-    { id:"c8", num:"8", name:"Ikkunat ja ulko-ovet", items:[
-      "Ikkunat (kunto, tiiveys, toiminta, vesipeltien kallistukset)", "Ulko-ovet" ]},
-    { id:"c9", num:"9", name:"Vesikatto ja yläpohja", items:[
-      "Vesikate ja katon varusteet", "Yläpohja ja ullakkotila",
-      "Käyttöturvallisuus (tikkaat, lumiesteet, kulkusillat, kaiteet, hätäpoistumistie)" ]},
-    { id:"c10", num:"10", name:"Märkätilat", items:[
-      "Pinnoitteet, rakenteet ja vedeneristys", "Lattiakaivot ja läpiviennit", "Lattioiden kallistukset",
-      "Pintapuolinen kosteuskartoitus", "Vedeneristys näkyviltä osin ja liitos lattiakaivoon" ]},
-    { id:"c11", num:"11", name:"Löylyhuone", items:[
-      "Pinnoitteet, rakenteet ja vedeneristykset", "Kiuas ja suojaetäisyydet", "Tuuletus" ]},
-    { id:"c12", num:"12", name:"Muut sisätilat", items:[
-      "Keittiö", "WC-tilat", "Kodinhoitohuone", "Asuinhuoneet", "Tekniset tilat", "Varastot, autotallit ja muut tilat",
-      "Väliseinät", "Välipohjat", "Laajennuksen liittymä (entinen ulkoseinä tai yläpohja)",
-      "Haitalliset aineet (asbestin mahdollisuus)", "Paloturvallisuus (hormit, palo-osastoinnin selvät puutteet)" ]},
-    { id:"c13", num:"13", name:"Lämmitysjärjestelmä", items:[
-      "Havaitut vauriot tai puutteet", "Lämmityslaitteet ja niiden ikä", "Tekniset käyttöiät", "Tulisijat ja hormit",
-      "Öljysäiliö, myös käytöstä poistettu (sijainti, tulvimisallas, tarkastuspöytäkirja)" ]},
-    { id:"c14", num:"14", name:"Vesi- ja viemärilaitteet", items:[
-      "Vesijohdot ja käyttövesiverkosto", "Viemärit", "Vesikalusteet, hanat ja sekoittajat",
-      "Jätevesijärjestelmä ja kaivot (kun ei kunnallistekniikkaa)",
-      "Vuoto- ja kondenssivesien ohjaus (lämmitys, vesi- ja viemärilaitteet)" ]},
-    { id:"c15", num:"15", name:"Ilmanvaihto", items:[
-      "Havaitut vauriot ja puutteet", "Korvausilma", "Siirtoilmaraot", "Ilmanvaihtokone", "Sisäilman laatu aistinvaraisesti",
-      "Terveellisyys: poikkeavat hajut (öljy, kreosootti, VOC), ilmavuodot maaperästä tai ryömintätilasta, kylmäsillat" ]},
-    { id:"c16", num:"16", name:"Sähköjärjestelmä", items:[
-      "Tekninen käyttöikä", "Havaitut vauriot ja puutteet", "Palovaroittimet" ]}
-  ];
-  var OWN_NUM = "17", OWN_NAME = "Muut kohdat";
-
+  /* Yleistarkastuksen rakenne: perustiedot, 1–3 lähtötiedot, 4 havainnot (alahavainnot mahdollisia), 5 ilmanvaihto */
   var META_FIELDS = [
     {k:"osoite", l:"Kohteen osoite", full:true},
     {k:"tilaaja", l:"Tilaaja"},
     {k:"pvm", l:"Tarkastuspäivä", type:"date"},
     {k:"tarkastaja", l:"Tarkastaja"},
-    {k:"rakennusvuosi", l:"Rakennusvuosi"},
-    {k:"tarkoitus", l:"Tarkastuksen tarkoitus", full:true, ph:"Esim. kosteusvaurioepäily, korjaustarve, huoltokirja"},
-    {k:"lasnaolijat", l:"Läsnäolijat", full:true},
-    {k:"lisatiedot", l:"Lisätiedot", full:true, area:true, ph:"Vapaa teksti: taustatiedot, omistajan kertomat asiat, sovitut asiat..."}
+    {k:"rakennusvuosi", l:"Rakennusvuosi"}
   ];
+  var OSAT = [
+    {k:"lahto", num:"1", name:"Tarkastuksen lähtötiedot", ph:"Tarkastuksen syy ja tausta, tilaajan kertomat asiat, sovitut asiat...", photos:true},
+    {k:"asiak", num:"2", name:"Lähtöasiakirjat", ph:"Käytetyt asiakirjat, esim. piirustukset, aiemmat raportit, huoltokirja. Asiakirjoista voi lisätä kuvia.", photos:true},
+    {k:"lasna", num:"3", name:"Läsnäolijat", ph:"Nimet ja roolit", photos:false}
+  ];
+  var IV_TYYPIT = ["Koneellinen poisto", "Painovoimainen", "Koneellinen tulo ja poisto"];
+  var PE_TAVAT = ["Mitattu", "Kokeellinen"];
 
   /* Mittaukset: samat kuin AKK-pöytäkirjassa */
   var MEAS_GROUPS = [
@@ -277,38 +256,64 @@
   }
 
   /* ---------------- tietomalli ---------------- */
-  function blankItem(){ return { text: "", photos: [], captions: [] }; }
+  function blankPart(){ return { text: "", photos: [], captions: [] }; }
+  function blankSub(){ return { id: uid(), title: "", text: "", photos: [], captions: [] }; }
+  function blankHav(){ var h = blankSub(); h.sub = []; return h; }
   function blankMeas(){
     var o = {};
     MEAS_GROUPS.forEach(function(g){ o[g.id] = (g.initial || []).map(function(r){ return Object.assign({}, r); }); });
     return o;
   }
   function freshCurrent(){
-    var items = {};
-    CHAPTERS.forEach(function(c){ c.items.forEach(function(t, i){ items[c.id+"-"+i] = blankItem(); }); });
     var meta = {}; META_FIELDS.forEach(function(f){ meta[f.k] = ""; });
     meta.pvm = todayISO();
-    return { id: uid(), meta: meta, items: items, omat: [], coverPhotos: [], coverCaptions: [], mittaukset: blankMeas(), openCats: {c6: true} };
+    var osat = { lahto: blankPart(), asiak: blankPart(), lasna: blankPart(), ovi: blankPart(),
+      iv: Object.assign(blankPart(), { tyyppi: "", peTapa: "", peTulos: "", peText: "" }) };
+    return { id: uid(), versio: 2, meta: meta, osat: osat, havainnot: [blankHav()], coverPhotos: [], coverCaptions: [], mittaukset: blankMeas() };
   }
+  function fixPart(p){ p = p || blankPart(); p.text = p.text || ""; p.photos = p.photos || []; p.captions = p.captions || []; return p; }
+  function fixSub(s){ fixPart(s); s.id = s.id || uid(); s.title = s.title || ""; delete s.sub; return s; }
+  function fixHav(h){ var sub = h.sub; fixSub(h); h.sub = (sub || []).map(fixSub); return h; }
   function migrate(i){
     if(!i) return i;
-    var f = freshCurrent();
-    i.meta = Object.assign({}, f.meta, {pvm: ""}, i.meta || {});
-    i.items = i.items || {};
-    Object.keys(f.items).forEach(function(k){
-      if(!i.items[k]) i.items[k] = blankItem();
-      if(!i.items[k].photos) i.items[k].photos = [];
-      if(!i.items[k].captions) i.items[k].captions = [];
-    });
-    i.omat = (i.omat || []).map(function(o){ o.photos = o.photos || []; o.captions = o.captions || []; return o; });
+    var oldMeta = i.meta || {};
+    i.meta = {}; META_FIELDS.forEach(function(f){ i.meta[f.k] = oldMeta[f.k] || ""; });
+    i.osat = i.osat || {};
+    ["lahto","asiak","lasna","iv","ovi"].forEach(function(k){ i.osat[k] = fixPart(i.osat[k]); });
+    ["tyyppi","peTapa","peTulos","peText"].forEach(function(k){ if(i.osat.iv[k] === undefined) i.osat.iv[k] = ""; });
+    /* Muistion ensimmäisen version tiedot siirretään uuteen rakenteeseen */
+    if(!i.versio){
+      var lt = [oldMeta.tarkoitus, oldMeta.lisatiedot].filter(Boolean).join("\n\n");
+      if(lt && !i.osat.lahto.text) i.osat.lahto.text = lt;
+      if(oldMeta.lasnaolijat && !i.osat.lasna.text) i.osat.lasna.text = oldMeta.lasnaolijat;
+      var hv = [];
+      Object.keys(i.items || {}).forEach(function(k){
+        var it = i.items[k];
+        if(it && ((it.text || "").trim() || (it.photos || []).length)){
+          hv.push({ title: k.replace(/^c(\d+)-(\d+)$/, function(x, a, b){ return "Kohta " + a + "." + (parseInt(b,10)+1); }), text: it.text, photos: it.photos, captions: it.captions });
+        }
+      });
+      (i.omat || []).forEach(function(o){ if((o.text || "").trim() || (o.photos || []).length || o.title) hv.push({ title: o.title, text: o.text, photos: o.photos, captions: o.captions }); });
+      i.havainnot = hv;
+      delete i.items; delete i.omat; delete i.openCats;
+      i.versio = 2;
+    }
+    i.havainnot = (i.havainnot || []).map(fixHav);
+    if(!i.havainnot.length) i.havainnot.push(blankHav());
     i.coverPhotos = i.coverPhotos || []; i.coverCaptions = i.coverCaptions || [];
     i.mittaukset = i.mittaukset || blankMeas();
     MEAS_GROUPS.forEach(function(g){ if(!i.mittaukset[g.id]) i.mittaukset[g.id] = []; });
-    i.openCats = i.openCats || {};
     return i;
   }
-  function ownById(insp, id){ return insp.omat.filter(function(o){ return o.id === id; })[0]; }
-  /* Kohteen sijainti avaimen perusteella: "cover", "c6-0", "o:<id>" tai "m:ryhmä:rivi" */
+  function findHav(insp, id){
+    for(var i=0;i<insp.havainnot.length;i++){
+      var h = insp.havainnot[i];
+      if(h.id === id) return { h: h, list: insp.havainnot };
+      for(var j=0;j<h.sub.length;j++) if(h.sub[j].id === id) return { h: h.sub[j], list: h.sub, parent: h };
+    }
+    return null;
+  }
+  /* Kuvien ja tekstin sijainti avaimen perusteella: "cover", "s:<osa>", "h:<havainto>" tai "m:ryhmä:rivi" */
   function target(insp, key){
     if(key === "cover") return { p: insp.coverPhotos, c: insp.coverCaptions };
     if(key.indexOf("m:") === 0){
@@ -316,23 +321,17 @@
       if(!row.photos) row.photos = []; if(!row.captions) row.captions = [];
       return { p: row.photos, c: row.captions, obj: row };
     }
-    var it = key.indexOf("o:") === 0 ? ownById(insp, key.slice(2)) : insp.items[key];
-    return { p: it.photos, c: it.captions, obj: it };
+    var obj = key.indexOf("s:") === 0 ? insp.osat[key.slice(2)] : findHav(insp, key.slice(2)).h;
+    return { p: obj.photos, c: obj.captions, obj: obj };
   }
-  function filled(it){ return !!((it.text && it.text.trim()) || (it.photos && it.photos.length)); }
-  function allItems(insp){
-    var out = [];
-    CHAPTERS.forEach(function(c){ c.items.forEach(function(t, i){
-      out.push({ key: c.id+"-"+i, ch: c, viite: c.num+"."+(i+1), title: t, d: insp.items[c.id+"-"+i] });
-    }); });
-    insp.omat.forEach(function(o, i){
-      out.push({ key: "o:"+o.id, ch: null, viite: OWN_NUM+"."+(i+1), title: o.title || "Nimetön kohta", d: o });
-    });
-    return out;
-  }
-  function filledCount(insp){ return allItems(insp).filter(function(x){ return filled(x.d); }).length; }
+  function filled(p){ return !!(p && ((p.text && p.text.trim()) || (p.photos && p.photos.length))); }
+  function subFilled(s){ return filled(s) || !!s.title.trim(); }
+  function havFilled(h){ return subFilled(h) || h.sub.some(subFilled); }
+  function ivFilled(o){ var v = o.iv; return filled(v) || !!(v.tyyppi || v.peTapa || v.peTulos || v.peText.trim()) || filled(o.ovi); }
+  function havCount(insp){ return insp.havainnot.filter(havFilled).length; }
   function hasAnything(insp){
-    return filledCount(insp) > 0 || insp.coverPhotos.length > 0 || !!insp.meta.osoite || !!insp.meta.lisatiedot;
+    var o = insp.osat;
+    return !!insp.meta.osoite || insp.coverPhotos.length > 0 || filled(o.lahto) || filled(o.asiak) || filled(o.lasna) || havCount(insp) > 0 || ivFilled(o);
   }
 
   /* ---------------- tallennus: IndexedDB, varalla localStorage ---------------- */
@@ -377,7 +376,7 @@
   var state = {
     current: migrate(loadLocal(CUR_KEY, null) || freshCurrent()),
     history: loadLocal(HIST_KEY, []).map(migrate),
-    tab: "kohde",
+    tab: "tarkastus",
     reportView: "list"
   };
   /* Tekstin kirjoitus tallennetaan pienellä viiveellä, muut muutokset heti */
@@ -394,8 +393,7 @@
 
   function render(){
     var html = renderTopbar() + "<main>";
-    if(state.tab === "kohde") html += renderKohde();
-    else if(state.tab === "tarkastus") html += renderTarkastus();
+    if(state.tab === "tarkastus") html += renderTarkastus();
     else if(state.tab === "mittaukset") html += renderMittaukset();
     else html += renderRaportit();
     html += "</main>";
@@ -405,13 +403,13 @@
   }
 
   function renderTopbar(){
-    var compact = state.tab === "tarkastus" || state.tab === "mittaukset";
+    var compact = state.tab === "mittaukset";
     var html = '<div class="topbar'+(compact?" collapsed":"")+'"><div class="topbar-inner">';
     html += '<div class="brand-mark">KUNTOTARKASTUS<small>MUISTIO</small></div>';
-    html += '<div class="brand-sub">Vapaat muistiinpanot kohdittain &middot; versio '+esc(APP_VERSION)+'</div>';
+    html += '<div class="brand-sub">Yleistarkastuksen muistio &middot; versio '+esc(APP_VERSION)+'</div>';
     html += '<div class="brand-addr">'+esc(state.current.meta.osoite || "Kohteen osoite puuttuu")+'</div>';
     html += '</div><div class="tabs">';
-    [["kohde","Kohdetiedot"],["tarkastus","Tarkastus"],["mittaukset","Mittaukset"],["raportit","Raportit"+(state.history.length?" ("+state.history.length+")":"")]].forEach(function(t){
+    [["tarkastus","Tarkastus"],["mittaukset","Mittaukset"],["raportit","Raportit"+(state.history.length?" ("+state.history.length+")":"")]].forEach(function(t){
       html += '<button class="tab-btn'+(state.tab===t[0]?" active":"")+'" data-tab="'+t[0]+'">'+t[1]+'</button>';
     });
     return html + '</div></div>';
@@ -420,66 +418,70 @@
   function renderPhotos(key, photos, caps){
     var n = photos.length, full = n >= MAX_PHOTOS;
     var html = '<div class="item-actions"><label class="photo-pick'+(full?" full":"")+'">&#128247; '+(full?"Kuvia enintään "+MAX_PHOTOS:"Lisää kuvia")+'<input type="file" accept="image/*" multiple data-photo-key="'+esc(key)+'"></label>';
-    html += '<span class="photo-count" data-photo-count="'+esc(key)+'">'+(n ? n+" / "+MAX_PHOTOS+" kuvaa" : "")+'</span></div>';
+    html += '<span class="photo-count">'+(n ? n+" / "+MAX_PHOTOS+" kuvaa" : "")+'</span></div>';
     if(n){
       html += '<div class="photo-list">';
       photos.forEach(function(src, p){
         html += '<div class="photo-ed"><div class="photo-thumb"><img src="'+src+'" alt=""><button class="photo-remove" data-remove-photo="'+esc(key)+'" data-photo-idx="'+p+'" aria-label="Poista kuva">&times;</button></div>';
-        html += '<textarea class="cap-input" data-cap-key="'+esc(key)+'" data-photo-idx="'+p+'" placeholder="Kuvateksti (vapaaehtoinen)">'+esc(caps[p] || "")+'</textarea></div>';
+        html += '<textarea class="cap-input" aria-label="Kuvateksti" data-cap-key="'+esc(key)+'" data-photo-idx="'+p+'" placeholder="Kuvateksti (vapaaehtoinen)">'+esc(caps[p] || "")+'</textarea></div>';
       });
       html += '</div>';
     }
     return html;
   }
-
-  function renderKohde(){
-    var cur = state.current, m = cur.meta;
-    var html = '<div class="field-card"><h3>Perustiedot</h3><div class="field-grid">';
-    META_FIELDS.forEach(function(f){
-      html += '<div class="field-item'+(f.full?" full":"")+'"><label>'+esc(f.l)+'</label>';
-      if(f.area) html += '<textarea aria-label="'+esc(f.l)+'" data-meta-key="'+f.k+'" placeholder="'+esc(f.ph||"")+'">'+esc(m[f.k])+'</textarea>';
-      else html += '<input aria-label="'+esc(f.l)+'" type="'+(f.type||"text")+'" data-meta-key="'+f.k+'" value="'+esc(m[f.k])+'"'+(f.ph?' placeholder="'+esc(f.ph)+'"':'')+'>';
-      html += '</div>';
-    });
-    html += '</div></div>';
-    html += '<div class="field-card"><h3>Yleiskuvat</h3><div class="section-note">Esim. julkisivut ja tontti. Ei pakollinen.</div>';
-    html += renderPhotos("cover", cur.coverPhotos, cur.coverCaptions) + '</div>';
-    return html;
+  function textArea(key, label, ph, val){
+    return '<textarea class="item-note" aria-label="'+esc(label)+'" data-text-key="'+esc(key)+'" placeholder="'+esc(ph)+'">'+esc(val)+'</textarea>';
+  }
+  function secHead(numTxt, name){ return '<div class="sec-head">'+(numTxt?'<span class="cat-num">'+numTxt+'</span>':'')+'<h3>'+esc(name)+'</h3></div>'; }
+  function chips(attr, field, opts, val){
+    return '<div class="flag-toggles">' + opts.map(function(o){
+      return '<button class="chip-toggle'+(val===o?" on":"")+'" '+attr+'="'+field+'" data-chip-val="'+esc(o)+'">'+esc(o)+'</button>';
+    }).join("") + '</div>';
   }
 
-  function itemHtml(key, viite, titleHtml, d){
-    var html = '<div class="item'+(filled(d)?" filled":"")+'" data-item="'+esc(key)+'">';
-    html += '<div class="item-text">'+titleHtml+'</div>';
-    html += '<textarea class="item-note" aria-label="Muistiinpanot '+esc(viite)+'" data-text-key="'+esc(key)+'" placeholder="Muistiinpanot: havainnot, mittaukset, toimenpiteet...">'+esc(d.text)+'</textarea>';
-    html += renderPhotos(key, d.photos, d.captions);
+  function havHtml(h, numTxt, isSub){
+    var key = "h:"+h.id;
+    var html = '<div class="hav'+(isSub?" sub":"")+(filled(h)?" filled":"")+'" data-item="'+esc(key)+'">';
+    html += '<div class="item-text"><span class="hav-num">'+numTxt+'</span><input class="item-title-input" aria-label="Havainnon '+numTxt+' otsikko" data-hav-title="'+esc(h.id)+'" value="'+esc(h.title)+'" placeholder="Otsikko, esim. Sokkeli"><button class="row-del" data-hav-del="'+esc(h.id)+'">Poista</button></div>';
+    html += textArea(key, "Havainto "+numTxt, "Havainto ja selostus", h.text);
+    html += renderPhotos(key, h.photos, h.captions);
+    if(!isSub){
+      h.sub.forEach(function(s, j){ html += havHtml(s, numTxt+"."+(j+1), true); });
+      html += '<button class="add-sub-btn" data-sub-add="'+esc(h.id)+'">+ Lisää alahavainto '+numTxt+'.'+(h.sub.length+1)+'</button>';
+    }
     return html + '</div>';
   }
 
-  function catHead(id, numTxt, name, done, total){
-    var open = !!state.current.openCats[id];
-    return '<button class="cat-head" data-cat-toggle="'+id+'"><span class="cat-num">'+numTxt+'</span><span class="cat-title"><div class="cat-name">'+esc(name)+'</div><div class="cat-count" data-cat-count="'+id+'">'+done+' / '+total+' kirjattu</div></span><span class="cat-chevron'+(open?" open":"")+'">&#9656;</span></button><div class="cat-body'+(open?" open":"")+'">';
-  }
-
   function renderTarkastus(){
-    var cur = state.current, html = '<div class="section-note" style="margin:0 2px 10px">Kirjoita vain ne kohdat, joista on sanottavaa. Tyhjät kohdat eivät tule Word-tiedostoon.</div>';
-    CHAPTERS.forEach(function(ch){
-      var done = ch.items.filter(function(t, i){ return filled(cur.items[ch.id+"-"+i]); }).length;
-      html += '<div class="category">' + catHead(ch.id, ch.num, ch.name, done, ch.items.length);
-      ch.items.forEach(function(t, i){
-        var key = ch.id+"-"+i;
-        html += itemHtml(key, ch.num+"."+(i+1), '<span>'+ch.num+'.'+(i+1)+' '+esc(t)+'</span>', cur.items[key]);
-      });
-      html += '</div></div>';
+    var cur = state.current, m = cur.meta, o = cur.osat;
+    var html = '<div class="field-card">' + secHead("", "Perustiedot") + '<div class="field-grid">';
+    META_FIELDS.forEach(function(f){
+      html += '<div class="field-item'+(f.full?" full":"")+'"><label>'+esc(f.l)+'</label>';
+      html += '<input aria-label="'+esc(f.l)+'" type="'+(f.type||"text")+'" data-meta-key="'+f.k+'" value="'+esc(m[f.k])+'"></div>';
     });
-    var oDone = cur.omat.filter(filled).length;
-    html += '<div class="category">' + catHead("omat", OWN_NUM, OWN_NAME, oDone, cur.omat.length);
-    cur.omat.forEach(function(o, i){
-      var key = "o:"+o.id;
-      var t = '<span style="flex:0 0 auto;padding-top:8px">'+OWN_NUM+'.'+(i+1)+'</span><input class="item-title-input" data-own-title="'+esc(o.id)+'" value="'+esc(o.title)+'" placeholder="Kohdan otsikko"><button class="row-del" data-own-del="'+esc(o.id)+'" style="padding-top:8px">Poista</button>';
-      html += itemHtml(key, OWN_NUM+"."+(i+1), t, o);
+    html += '</div><div class="sub-label">Yleiskuvat (vapaaehtoinen)</div>' + renderPhotos("cover", cur.coverPhotos, cur.coverCaptions) + '</div>';
+
+    OSAT.forEach(function(s){
+      html += '<div class="field-card">' + secHead(s.num, s.name) + textArea("s:"+s.k, s.name, s.ph, o[s.k].text);
+      if(s.photos) html += renderPhotos("s:"+s.k, o[s.k].photos, o[s.k].captions);
+      html += '</div>';
     });
-    html += '<div class="add-own"><button class="add-row-btn" id="btn-add-own">+ Lisää oma kohta</button></div>';
-    html += '</div></div>';
+
+    html += '<div class="field-card">' + secHead("4", "Havainnot");
+    cur.havainnot.forEach(function(h, i){ html += havHtml(h, "4."+(i+1), false); });
+    html += '<button class="add-row-btn" id="btn-add-hav" style="margin-top:12px">+ Lisää havainto 4.'+(cur.havainnot.length+1)+'</button></div>';
+
+    var iv = o.iv;
+    html += '<div class="field-card">' + secHead("5", "Ilmanvaihto");
+    html += '<div class="sub-label">Järjestelmä</div>' + chips("data-iv-chip", "tyyppi", IV_TYYPIT, iv.tyyppi);
+    html += '<div style="margin-top:10px">' + textArea("s:iv", "Ilmanvaihto", "Havainnot ilmanvaihdosta", iv.text) + '</div>';
+    html += renderPhotos("s:iv", iv.photos, iv.captions);
+    html += '<div class="sub-label sep">Paine-ero</div>' + chips("data-iv-chip", "peTapa", PE_TAVAT, iv.peTapa);
+    html += '<input class="item-title-input" style="width:100%;margin-top:8px;font-weight:500" aria-label="Paine-eron tulos" data-iv-input="peTulos" value="'+esc(iv.peTulos)+'" placeholder="Tulos, esim. −5 Pa (alipaine sisällä)">';
+    html += '<textarea class="item-note" style="margin-top:8px" aria-label="Paine-ero selostus" data-iv-input="peText" placeholder="Selostus: miten mitattiin tai kokeiltiin, olosuhteet">'+esc(iv.peText)+'</textarea>';
+    html += '<div class="sub-label sep">Oviraot</div>' + textArea("s:ovi", "Oviraot", "Oviraot ja siirtoilma", o.ovi.text);
+    html += renderPhotos("s:ovi", o.ovi.photos, o.ovi.captions);
+    html += '</div>';
     return html;
   }
 
@@ -522,7 +524,7 @@
             f.opts.forEach(function(o){ html += '<button class="chip-toggle'+(v===o?" on":"")+'" data-m-chip="'+g.id+'" data-m-idx="'+i+'" data-m-field="'+f.k+'" data-chip-val="'+esc(o)+'">'+esc(o)+'</button>'; });
             html += '</div>';
           } else {
-            html += '<input type="text"'+(f.type==="num"?' inputmode="decimal"':'')+' data-m-input="'+g.id+'" data-m-idx="'+i+'" data-m-field="'+f.k+'" value="'+esc(v)+'">';
+            html += '<input type="text" aria-label="'+esc(f.l)+'"'+(f.type==="num"?' inputmode="decimal"':'')+' data-m-input="'+g.id+'" data-m-idx="'+i+'" data-m-field="'+f.k+'" value="'+esc(v)+'">';
           }
           html += '</div>';
         });
@@ -544,13 +546,13 @@
   function renderReportList(){
     var cur = state.current;
     var html = '<div class="report-card" data-open-report="current"><div class="report-card-main"><div class="report-card-title">Kesken oleva muistio</div>';
-    html += '<div class="report-card-sub">'+(esc(cur.meta.osoite) || "Osoite puuttuu")+' &middot; '+fmtDate(cur.meta.pvm)+' &middot; '+filledCount(cur)+' kohtaa kirjattu</div></div></div>';
+    html += '<div class="report-card-sub">'+(esc(cur.meta.osoite) || "Osoite puuttuu")+' &middot; '+fmtDate(cur.meta.pvm)+' &middot; '+havCount(cur)+' havaintoa</div></div></div>';
     if(!state.history.length){
       html += '<div class="empty-state"><div class="big">Ei tallennettuja raportteja</div>Tallenna nykyinen muistio, niin se ilmestyy tähän listaan.</div>';
     } else {
       state.history.slice().sort(function(a,b){ return b.savedAt - a.savedAt; }).forEach(function(h){
         html += '<div class="report-card" data-open-report="'+h.id+'"><div class="report-card-main"><div class="report-card-title">'+(esc(h.meta.osoite) || "Osoite puuttuu")+'</div>';
-        html += '<div class="report-card-sub">'+fmtDate(h.meta.pvm)+' &middot; '+filledCount(h)+' kohtaa &middot; tallennettu '+fmtDateTime(h.savedAt)+'</div></div>';
+        html += '<div class="report-card-sub">'+fmtDate(h.meta.pvm)+' &middot; '+havCount(h)+' havaintoa &middot; tallennettu '+fmtDateTime(h.savedAt)+'</div></div>';
         html += '<button class="list-del-btn" data-quick-del="'+h.id+'" aria-label="Poista raportti">&times;</button></div>';
       });
     }
@@ -571,28 +573,50 @@
   function photoBlock(ph, caps){ return {t:"photos", items: ph.map(function(p, i){ return {src:p, cap: caps[i] || ""}; })}; }
   function buildDoc(insp, forExport){
     migrate(insp);
-    var b = [], m = insp.meta;
+    var b = [], m = insp.meta, o = insp.osat;
+    function textAndPhotos(p){
+      if(p.text && p.text.trim()) b.push({t:"p", text: p.text.trim()});
+      if(p.photos.length) b.push(photoBlock(p.photos, p.captions));
+    }
     b.push({t:"title", text: m.osoite || "Kuntotarkastus"});
     b.push({t:"sub", text: "Kuntotarkastuksen muistio" + (forExport ? " · viety " + fmtDateTime(Date.now()) : "")});
     if(insp.coverPhotos.length) b.push(photoBlock(insp.coverPhotos, insp.coverCaptions));
     var rows = [];
-    META_FIELDS.forEach(function(f){ if(f.k !== "lisatiedot" && m[f.k]) rows.push([f.l, f.type === "date" ? fmtDate(m[f.k]) : m[f.k]]); });
+    META_FIELDS.forEach(function(f){ if(m[f.k]) rows.push([f.l, f.type === "date" ? fmtDate(m[f.k]) : m[f.k]]); });
     if(rows.length){ b.push({t:"h1", text:"Perustiedot"}); b.push({t:"kv", rows: rows}); }
-    if(m.lisatiedot){ b.push({t:"h1", text:"Lisätiedot"}); b.push({t:"p", text: m.lisatiedot}); }
 
-    var list = allItems(insp);
-    function chapter(numTxt, name, items){
-      var f = items.filter(function(x){ return filled(x.d); });
-      if(!f.length) return;
-      b.push({t:"h1", text: numTxt + ". " + name});
-      f.forEach(function(x){
-        b.push({t:"item", text: x.viite + " " + x.title});
-        if(x.d.text && x.d.text.trim()) b.push({t:"p", text: x.d.text.trim()});
-        if(x.d.photos.length) b.push(photoBlock(x.d.photos, x.d.captions));
+    OSAT.forEach(function(s){
+      if(!filled(o[s.k])) return;
+      b.push({t:"h1", text: s.num + ". " + s.name});
+      textAndPhotos(o[s.k]);
+    });
+
+    if(havCount(insp)){
+      b.push({t:"h1", text:"4. Havainnot"});
+      insp.havainnot.forEach(function(h, i){
+        if(!havFilled(h)) return;
+        var n = "4." + (i+1);
+        b.push({t:"item", text: n + " " + (h.title.trim() || "Havainto")});
+        textAndPhotos(h);
+        h.sub.forEach(function(s, j){
+          if(!subFilled(s)) return;
+          b.push({t:"item", text: n + "." + (j+1) + " " + (s.title.trim() || "Alahavainto"), sub: true});
+          textAndPhotos(s);
+        });
       });
     }
-    CHAPTERS.forEach(function(ch){ chapter(ch.num, ch.name, list.filter(function(x){ return x.ch === ch; })); });
-    chapter(OWN_NUM, OWN_NAME, list.filter(function(x){ return !x.ch; }));
+
+    if(ivFilled(o)){
+      var iv = o.iv;
+      b.push({t:"h1", text:"5. Ilmanvaihto"});
+      rows = [];
+      if(iv.tyyppi) rows.push(["Järjestelmä", iv.tyyppi]);
+      if(iv.peTapa || iv.peTulos) rows.push(["Paine-ero", [iv.peTapa, iv.peTulos].filter(Boolean).join(", ")]);
+      if(rows.length) b.push({t:"kv", rows: rows});
+      textAndPhotos(iv);
+      if(iv.peText.trim()){ b.push({t:"item", text:"Paine-ero"}); b.push({t:"p", text: iv.peText.trim()}); }
+      if(filled(o.ovi)){ b.push({t:"item", text:"Oviraot"}); textAndPhotos(o.ovi); }
+    }
 
     var measOut = [];
     MEAS_GROUPS.forEach(function(g){
@@ -617,7 +641,7 @@
       });
     });
     if(measOut.length){ b.push({t:"h1", text:"Mittaukset"}); b = b.concat(measOut); }
-    if(!list.some(function(x){ return filled(x.d); }) && !measOut.length) b.push({t:"p", text:"Kohtia ei ole vielä kirjattu.", cls:"muted"});
+    if(!(filled(o.lahto) || filled(o.asiak) || filled(o.lasna) || havCount(insp) || ivFilled(o) || measOut.length)) b.push({t:"p", text:"Muistioon ei ole vielä kirjattu mitään.", cls:"muted"});
     return b;
   }
   function blocksToHtml(blocks){
@@ -629,7 +653,7 @@
         case "sub": html += '<div class="doc-sub">'+txt(bl.text)+'</div>'; break;
         case "h1": html += '<div class="doc-chapter-title">'+txt(bl.text)+'</div>'; break;
         case "h2": html += '<div class="doc-h2">'+txt(bl.text)+'</div>'; break;
-        case "item": html += '<div class="doc-blk-item">'+txt(bl.text)+'</div>'; break;
+        case "item": html += '<div class="doc-blk-item'+(bl.sub?" sub":"")+'">'+txt(bl.text)+'</div>'; break;
         case "p": html += '<div class="doc-item-note"'+(bl.cls==="muted"?' style="color:var(--ink-soft)"':'')+'>'+txt(bl.text)+'</div>'; break;
         case "kv":
           html += '<table class="doc-kv"><tbody>';
@@ -653,17 +677,10 @@
   /* ---------------- tapahtumat ---------------- */
   function on(sel, ev, fn){ app.querySelectorAll(sel).forEach(function(el){ el.addEventListener(ev, function(e){ fn(el, e); }); }); }
   function refreshItemState(key){
-    var cur = state.current, t = target(cur, key), el = app.querySelector('[data-item="'+key+'"]');
-    if(el) el.classList.toggle("filled", filled(t.obj));
-    var chId = key.indexOf("o:") === 0 ? "omat" : key.split("-")[0];
-    var cnt = app.querySelector('[data-cat-count="'+chId+'"]');
-    if(!cnt) return;
-    if(chId === "omat") cnt.textContent = cur.omat.filter(filled).length + " / " + cur.omat.length + " kirjattu";
-    else {
-      var ch = CHAPTERS.filter(function(c){ return c.id === chId; })[0];
-      cnt.textContent = ch.items.filter(function(x, i){ return filled(cur.items[chId+"-"+i]); }).length + " / " + ch.items.length + " kirjattu";
-    }
+    var el = app.querySelector('[data-item="'+key+'"]');
+    if(el) el.classList.toggle("filled", filled(target(state.current, key).obj));
   }
+  function focusTitle(id){ var inp = app.querySelector('[data-hav-title="'+id+'"]'); if(inp){ inp.focus(); inp.scrollIntoView({block:"center"}); } }
 
   function bindEvents(){
     on("[data-tab]", "click", function(el){
@@ -678,33 +695,46 @@
       persistSoon();
       if(k === "osoite"){ var a = app.querySelector(".brand-addr"); if(a) a.textContent = el.value || "Kohteen osoite puuttuu"; }
     });
-    on("[data-cat-toggle]", "click", function(el){
-      var id = el.getAttribute("data-cat-toggle");
-      state.current.openCats[id] = !state.current.openCats[id];
-      persistCurrent(); render();
-    });
     on("[data-text-key]", "input", function(el){
       var key = el.getAttribute("data-text-key");
       target(state.current, key).obj.text = el.value;
       persistSoon(); refreshItemState(key);
     });
-    on("[data-own-title]", "input", function(el){
-      ownById(state.current, el.getAttribute("data-own-title")).title = el.value;
+
+    /* Havainnot */
+    on("[data-hav-title]", "input", function(el){
+      findHav(state.current, el.getAttribute("data-hav-title")).h.title = el.value;
       persistSoon();
     });
-    on("[data-own-del]", "click", function(el){
-      var id = el.getAttribute("data-own-del"), o = ownById(state.current, id);
-      if((filled(o) || o.title) && !confirm("Poistetaanko kohta " + (o.title || "") + " teksteineen ja kuvineen?")) return;
-      state.current.omat = state.current.omat.filter(function(x){ return x.id !== id; });
+    on("[data-hav-del]", "click", function(el){
+      var f = findHav(state.current, el.getAttribute("data-hav-del"));
+      if(!f) return;
+      var subs = f.h.sub && f.h.sub.length;
+      if((subFilled(f.h) || subs) && !confirm("Poistetaanko havainto" + (f.h.title ? " " + f.h.title : "") + (subs ? " alahavaintoineen" : "") + " teksteineen ja kuvineen?")) return;
+      f.list.splice(f.list.indexOf(f.h), 1);
+      if(!state.current.havainnot.length) state.current.havainnot.push(blankHav());
       persistCurrent(); render();
     });
-    var addOwn = document.getElementById("btn-add-own");
-    if(addOwn) addOwn.addEventListener("click", function(){
-      var o = { id: uid(), title: "", text: "", photos: [], captions: [] };
-      state.current.omat.push(o);
-      state.current.openCats.omat = true;
+    var addHav = document.getElementById("btn-add-hav");
+    if(addHav) addHav.addEventListener("click", function(){
+      var h = blankHav(); state.current.havainnot.push(h);
+      persistCurrent(); render(); focusTitle(h.id);
+    });
+    on("[data-sub-add]", "click", function(el){
+      var f = findHav(state.current, el.getAttribute("data-sub-add")), s = blankSub();
+      f.h.sub.push(s);
+      persistCurrent(); render(); focusTitle(s.id);
+    });
+
+    /* Ilmanvaihto */
+    on("[data-iv-chip]", "click", function(el){
+      var iv = state.current.osat.iv, f = el.getAttribute("data-iv-chip"), v = el.getAttribute("data-chip-val");
+      iv[f] = iv[f] === v ? "" : v;
       persistCurrent(); render();
-      var inp = app.querySelector('[data-own-title="'+o.id+'"]'); if(inp) inp.focus();
+    });
+    on("[data-iv-input]", "input", function(el){
+      state.current.osat.iv[el.getAttribute("data-iv-input")] = el.value;
+      persistSoon();
     });
 
     /* Mittaukset */
@@ -777,17 +807,15 @@
       if(state.current.id !== h.id && hasAnything(state.current) && !confirm("Kesken oleva muistio (" + (state.current.meta.osoite || "ei osoitetta") + ") korvataan tällä raportilla. Tallenna se ensin, jos haluat säilyttää sen.\n\nKorvataanko?")) return;
       state.current = migrate(JSON.parse(JSON.stringify(h)));
       delete state.current.savedAt;
-      state.current.openCats = {c6: true};
       persistCurrent(); state.tab = "tarkastus"; render(); window.scrollTo(0, 0);
     });
   }
 
   function saveInspection(){
-    if(!hasAnything(state.current)){ alert("Kirjoita ainakin yksi kohta tai osoite ennen tallennusta."); return; }
+    if(!hasAnything(state.current)){ alert("Kirjoita ainakin osoite tai yksi havainto ennen tallennusta."); return; }
     flush();
     var snap = JSON.parse(JSON.stringify(state.current));
     snap.savedAt = Date.now();
-    delete snap.openCats;
     var idx = -1;
     state.history.forEach(function(h, i){ if(h.id === snap.id) idx = i; });
     if(idx > -1) state.history[idx] = snap; else state.history.push(snap);
@@ -800,7 +828,7 @@
   function newInspection(){
     if(hasAnything(state.current) && !confirm("Aloitetaanko uusi tyhjä muistio? Nykyinen kannattaa tallentaa ensin raportiksi.")) return;
     state.current = freshCurrent();
-    state.tab = "kohde";
+    state.tab = "tarkastus";
     persistCurrent(); render(); window.scrollTo(0, 0);
   }
 
@@ -942,7 +970,7 @@
         case "sub": body.push(para(run(bl.text, '<w:i/><w:color w:val="55625F"/>'), '<w:spacing w:after="200"/>')); break;
         case "h1": body.push(para(run(bl.text), '<w:pStyle w:val="Heading1"/>')); break;
         case "h2": body.push(para(run(bl.text), '<w:pStyle w:val="Heading2"/>')); break;
-        case "item": body.push(para(run(bl.text, '<w:b/>'), '<w:keepNext/><w:spacing w:before="200" w:after="40"/><w:pBdr><w:top w:val="single" w:sz="4" w:space="4" w:color="D3D7D3"/></w:pBdr>')); break;
+        case "item": body.push(para(run(bl.text, '<w:b/>'), '<w:keepNext/><w:pBdr><w:top w:val="single" w:sz="4" w:space="4" w:color="D3D7D3"/></w:pBdr><w:spacing w:before="200" w:after="40"/>' + (bl.sub ? '<w:ind w:left="425"/>' : ''))); break;
         case "p": body.push(para(run(bl.text, bl.cls === "muted" ? '<w:i/><w:color w:val="55625F"/>' : ''))); break;
         case "kv":
           var wkv = widthsOf([38, 62]);
