@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Muistion käyttöohje</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #E9EBEA; --surface: #FFFFFF; --surface-2: #F3F4F2; --ink: #182225; --ink-soft: #55625F;
+    --line: #D3D7D3; --navy: #14293B; --navy-2: #1E3A52; --orange: #E2600C; --yellow: #F0B31C;
+    --warn-bg: #FCEFD8; --warn-ink: #8A5A00;
+    --font-head: "Big Shoulders Display", "Arial Narrow", sans-serif;
+    --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14181A; --surface: #1D2325; --surface-2: #242B2D; --ink: #EDEFEC; --ink-soft: #9AA6A2;
+      --line: #333B3D; --navy-2: #7FA8C9; --warn-bg: #3A2E12; --warn-ink: #F0B31C;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14181A; --surface: #1D2325; --surface-2: #242B2D; --ink: #EDEFEC; --ink-soft: #9AA6A2;
+    --line: #333B3D; --navy-2: #7FA8C9; --warn-bg: #3A2E12; --warn-ink: #F0B31C;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.55; }
+  header { position: sticky; top: 0; z-index: 5; background: #14293B; color: #F4F6F5; padding: calc(12px + env(safe-area-inset-top, 0px)) 16px 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.18); }
+  .head-inner { max-width: 680px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .brand { font-family: var(--font-head); font-weight: 800; font-size: 21px; line-height: 1; }
+  .brand small { color: var(--yellow); font-size: 0.7em; margin-left: 6px; }
+  .back { color: #fff; background: var(--orange); text-decoration: none; font-weight: 700; font-size: 13px; padding: 8px 12px; border-radius: 8px; white-space: nowrap; }
+  main { max-width: 680px; margin: 0 auto; padding: 16px 16px 60px; }
+  h1 { font-family: var(--font-head); font-size: 30px; line-height: 1.1; margin: 4px 0 6px; }
+  .lead { color: var(--ink-soft); margin: 0 0 16px; }
+  nav.toc { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; }
+  nav.toc b { display: block; font-size: 12px; color: var(--ink-soft); letter-spacing: .3px; text-transform: uppercase; margin-bottom: 6px; }
+  nav.toc ol { margin: 0; padding-left: 20px; }
+  nav.toc a { color: var(--navy-2); font-weight: 600; text-decoration: none; }
+  section { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; scroll-margin-top: 70px; }
+  h2 { font-family: var(--font-head); font-size: 22px; margin: 0 0 8px; }
+  h3 { font-size: 15px; margin: 14px 0 4px; }
+  p { margin: 0 0 10px; }
+  ul, ol { margin: 0 0 10px; padding-left: 22px; }
+  li { margin-bottom: 4px; }
+  .btn { display: inline-block; background: var(--surface-2); border: 1px solid var(--line); border-radius: 6px; padding: 0 6px; font-weight: 700; font-size: 13.5px; white-space: nowrap; }
+  .note { background: var(--warn-bg); color: var(--warn-ink); border-radius: 8px; padding: 10px 12px; margin: 8px 0 10px; font-size: 14px; }
+  .note b { color: inherit; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 4px 0 10px; }
+  td { border-top: 1px solid var(--line); padding: 7px 6px; vertical-align: top; }
+  td:first-child { font-weight: 700; width: 38%; }
+  footer { color: var(--ink-soft); font-size: 12.5px; text-align: center; margin-top: 18px; }
+</style>
+</head>
+<body>
+<header><div class="head-inner"><div class="brand">KUNTOTARKASTUS<small>MUISTIO</small></div><a class="back" href="./">&larr; Sovellukseen</a></div></header>
+<main>
+  <h1>Käyttöohje</h1>
+  <p class="lead">Muistio on puhelinsovellus kiinteistön tai asunnon yleistarkastuksen muistiinpanoihin. Kirjaat havainnot ja kuvat paikan päällä, ja sovellus tekee niistä Word-tiedoston.</p>
+
+  <nav class="toc"><b>Sisältö</b><ol>
+    <li><a href="#aloitus">Aloitus</a></li>
+    <li><a href="#tallennus">Näin tiedot tallentuvat</a></li>
+    <li><a href="#tarkastus">Tarkastuksen kirjaaminen</a></li>
+    <li><a href="#kuvat">Kuvat</a></li>
+    <li><a href="#mittaukset">Mittaukset</a></li>
+    <li><a href="#raportti">Raportti ja Word-tiedosto</a></li>
+    <li><a href="#ongelmat">Ongelmatilanteet</a></li>
+  </ol></nav>
+
+  <section id="aloitus">
+    <h2>1. Aloitus</h2>
+    <p>Avaa puhelimen selaimessa osoite <b>jkarkimaa-bit.github.io/tarkastus/</b>. Sovellusta ei asenneta kaupasta, eikä se vaadi kirjautumista.</p>
+    <h3>Kuvake aloitusnäytölle</h3>
+    <ul>
+      <li><b>Android (Chrome):</b> valikko <span class="btn">&#8942;</span> &rarr; <b>Lisää aloitusnäytölle</b>.</li>
+      <li><b>iPhone (Safari):</b> Jaa-painike &rarr; <b>Lisää Koti-valikkoon</b>.</li>
+    </ul>
+    <p>Sovelluksessa on kolme välilehteä: <b>Tarkastus</b>, <b>Mittaukset</b> ja <b>Raportit</b>.</p>
+  </section>
+
+  <section id="tallennus">
+    <h2>2. Näin tiedot tallentuvat</h2>
+    <ul>
+      <li>Kaikki kirjoittamasi ja kuvat tallentuvat <b>automaattisesti puhelimen muistiin</b>. Erillistä tallennusta ei tarvita, vaikka sovellus suljettaisiin kesken.</li>
+      <li>Tiedot <b>eivät siirry internetiin</b> eivätkä muille laitteille. Ne ovat vain siinä puhelimessa ja selaimessa, jolla ne on kirjattu.</li>
+      <li>Käytä aina samaa selainta. Jos avaat sovelluksen toisella selaimella, kesken oleva muistio ei näy siellä.</li>
+    </ul>
+    <div class="note"><b>Tärkeää:</b> jos selaimen tiedot (evästeet ja sivustotiedot) tyhjennetään, myös muistiot poistuvat. Vie valmis muistio talteen Word-tiedostona ja JSON-tiedostona. JSON-tiedoston voi tuoda takaisin sovellukseen.</div>
+  </section>
+
+  <section id="tarkastus">
+    <h2>3. Tarkastuksen kirjaaminen</h2>
+    <p>Kaikki kirjataan <b>Tarkastus</b>-välilehdelle ylhäältä alas. Täytä vain se, mitä tarvitset. Tyhjät osat eivät tule Word-tiedostoon.</p>
+    <table>
+      <tr><td>Perustiedot</td><td>Osoite, tilaaja ja yhteystiedot, tarkastuspäivä, rakennusvuosi sekä tarkastajan nimi, pätevyys, yritys ja yhteystiedot. Lisäksi yleiskuvia esim. julkisivusta. Ensimmäinen yleiskuva tulee raportin kansilehdelle.</td></tr>
+      <tr><td>1. Tarkastuksen lähtötiedot</td><td>Tarkastuksen syy ja tausta sekä tilaajan kertomat asiat. Voit lisätä kuvia.</td></tr>
+      <tr><td>2. Lähtöasiakirjat</td><td>Käytetyt asiakirjat, esim. piirustukset tai aiemmat raportit. Asiakirjoista voi ottaa kuvia.</td></tr>
+      <tr><td>3. Läsnäolijat</td><td>Nimet ja roolit.</td></tr>
+      <tr><td>4. Havainnot</td><td>Jokaisella havainnolla on otsikko, teksti ja kuvat selostuksineen.</td></tr>
+      <tr><td>5. Ilmanvaihto</td><td>Järjestelmä, paine-ero ja oviraot.</td></tr>
+      <tr><td>6. Tarkastuksen rajaukset</td><td>Mitä ei tarkastettu ja miksi.</td></tr>
+      <tr><td>7. Yhteenveto ja johtopäätökset</td><td>Kirjoitetaan yleensä viimeisenä. Raportissa tämä on ensimmäinen luku.</td></tr>
+    </table>
+    <p><b>Tarkastajan tiedot</b> (nimi, pätevyys, yritys ja yhteystiedot) muistetaan puhelimessa, ja ne täyttyvät valmiiksi seuraavaan muistioon.</p>
+    <h3>Havainnot ja alahavainnot</h3>
+    <ul>
+      <li>Ensimmäinen havainto <b>4.1</b> on valmiina. Kirjoita otsikko, esim. <i>Makuuhuone</i>, ja havainto.</li>
+      <li><span class="btn">+ Lisää havainto</span> lisää seuraavan havainnon (4.2, 4.3 …).</li>
+      <li><span class="btn">+ Lisää alahavainto</span> lisää havainnon alle tarkennuksen (4.1.1, 4.1.2 …), esim. <i>4.1 Makuuhuone &rarr; 4.1.1 Pintakosteus</i>.</li>
+      <li><b>Toimenpide-ehdotus:</b> jokaisella havainnolla on oma ehdotuskenttä ja kiireellisyys (<i>Heti</i>, <i>1–2 v</i>, <i>3–5 v</i> tai <i>Seuranta</i>). Ehdotukset kootaan Word-tiedoston loppuun taulukoksi.</li>
+      <li><span class="btn">Poista</span> poistaa havainnon. Sovellus kysyy vahvistuksen, jos havainnossa on tekstiä tai kuvia. Pääkohdan poisto poistaa myös sen alahavainnot.</li>
+    </ul>
+    <h3>Ilmanvaihto</h3>
+    <ul>
+      <li><b>Järjestelmä:</b> valitse <i>Koneellinen poisto</i>, <i>Painovoimainen</i> tai <i>Koneellinen tulo ja poisto</i>. Toinen napautus poistaa valinnan.</li>
+      <li><b>Paine-ero:</b> valitse <i>Mitattu</i> tai <i>Kokeellinen</i>. Kirjoita tulos, esim. −5 Pa, ja tarvittaessa selostus.</li>
+      <li><b>Oviraot:</b> teksti ja kuvat.</li>
+      <li><b>Toimenpide-ehdotus:</b> ilmanvaihdolle on oma ehdotus ja kiireellisyys.</li>
+    </ul>
+  </section>
+
+  <section id="kuvat">
+    <h2>4. Kuvat</h2>
+    <ul>
+      <li>Paina <span class="btn">&#128247; Lisää kuvia</span>. Puhelin kysyy, otetaanko kuva kameralla vai valitaanko galleriasta. Galleriasta voit valita <b>useita kuvia kerralla</b>.</li>
+      <li>Yhteen kohtaan mahtuu <b>enintään 12 kuvaa</b>. Jos valitset enemmän, ylimääräiset jätetään pois, ja sovellus kertoo siitä.</li>
+      <li>Kirjoita kuvan viereen <b>kuvateksti</b>, jos haluat. Se tulee Word-tiedostoon kuvan alle.</li>
+      <li>Kuvan kulman <span class="btn">&times;</span> poistaa kuvan.</li>
+    </ul>
+    <p>Sovellus pienentää kuvat tallennettaessa, jotta puhelimen muisti ja Word-tiedosto pysyvät kohtuullisen kokoisina. Alkuperäiset kuvat jäävät puhelimen galleriaan.</p>
+  </section>
+
+  <section id="mittaukset">
+    <h2>5. Mittaukset</h2>
+    <p><b>Mittaukset</b>-välilehdellä on valmiit taulukot, esim. ilman lämpötila ja kosteus, korkeuserot, porareikämittaukset, kallistukset ja kosteuskartoitus.</p>
+    <ul>
+      <li>Kirjaa vain tehdyt mittaukset. Tyhjät rivit eivät tule Word-tiedostoon.</li>
+      <li><span class="btn">+ Lisää rivi</span> lisää uuden mittausrivin. <span class="btn">Poista rivi</span> poistaa rivin.</li>
+      <li>Kun lämpötila ja RH on kirjattu, sovellus laskee <b>vesihöyryn määrän (g/m³)</b>.</li>
+      <li>Desimaalierottimeksi käy pilkku.</li>
+    </ul>
+  </section>
+
+  <section id="raportti">
+    <h2>6. Raportti ja Word-tiedosto</h2>
+    <h3>Tallennus raportiksi</h3>
+    <p>Kun tarkastus on valmis, paina alareunasta <span class="btn">Tallenna raportti</span>. Muistio siirtyy <b>Raportit</b>-listaan, ja vientivalikko aukeaa:</p>
+    <ul>
+      <li><b>Lähetä sähköpostiin:</b> Word-tiedosto tulee viestin liitteeksi. Jos puhelin ei osaa liittää tiedostoa suoraan, tiedosto tallentuu Lataukset-kansioon, ja sovellus neuvoo, miten liität sen viestiin.</li>
+      <li><b>Jaa: Drive, WhatsApp…:</b> avaa puhelimen jakovalikon, jos puhelin tukee sitä.</li>
+      <li><b>Tallenna puhelimeen:</b> tiedosto tallentuu Lataukset-kansioon.</li>
+      <li><b>Raportti (Word):</b> raporttiluonnos, ks. alta.</li>
+      <li><b>Tallenna tiedot (.json):</b> koko muistio kuvineen yhdessä tiedostossa. Katso alta kohta <i>Tiedot talteen ja siirto</i>.</li>
+    </ul>
+    <p>Tiedoston nimi on muotoa <i>Osoite - muistio vvvv-kk-pp.docx</i>. Wordiin tulevat vain täytetyt osat ja havainnot, kuvat kuvateksteineen, toimenpide-ehdotukset sekä mittaukset taulukkoina. Lopussa on taulukko kaikista toimenpide-ehdotuksista kiireellisyyksineen.</p>
+    <h3>Raporttiluonnos</h3>
+    <p><b>Raportti (Word)</b> tekee muistiosta raportin muotoisen Word-tiedoston <i>Osoite - kuntotarkastusraportti vvvv-kk-pp.docx</i>:</p>
+    <ul>
+      <li>kansilehti, jossa on otsikko, osoite, ensimmäinen yleiskuva sekä tilaajan ja tarkastajan tiedot</li>
+      <li>sisällysluettelo</li>
+      <li>1. Yhteenveto ja johtopäätökset sekä toimenpide-ehdotukset kiireellisyysjärjestyksessä</li>
+      <li>2. Lähtötiedot, 3. Rajaukset, 4. Havainnot, 5. Ilmanvaihto ja 6. Mittaukset</li>
+      <li>allekirjoitus</li>
+    </ul>
+    <p>Kuvat numeroidaan juoksevasti (Kuva 1, Kuva 2 …). Ylätunnisteessa on yritys ja kohde, alatunnisteessa sivunumerot. Tyhjät luvut jätetään pois.</p>
+    <div class="note">Kun avaat raportin Wordissa, Word kysyy, päivitetäänkö tiedoston kentät. Vastaa <b>Kyllä</b>, niin sisällysluettelo täyttyy. Raportti on luonnos: tarkista ja viimeistele se Wordissa ennen lähettämistä.</div>
+    <h3>Tiedot talteen ja siirto (.json)</h3>
+    <ul>
+      <li>JSON-tiedosto on muistion <b>varmuuskopio</b>. Siinä ovat kaikki tiedot ja kuvat sellaisenaan.</li>
+      <li>Säilytä tiedosto esim. Drivessa tai lähetä se sähköpostilla.</li>
+      <li><b>Tuonti:</b> Raportit &rarr; <b>Tuo muistio (.json)</b> &rarr; valitse tiedosto. Muistio tulee Raportit-listaan, eikä kesken oleva muistio muutu. Tällä tavalla muistion voi siirtää myös toiseen puhelimeen.</li>
+      <li>Jos sama raportti on jo listassa, sovellus kysyy, korvataanko se. Jos vastaat Peruuta, tuotu muistio lisätään kopiona.</li>
+    </ul>
+    <h3>Raportit-lista</h3>
+    <ul>
+      <li>Avaa raportti napauttamalla. Näet sen esikatseluna, ja voit viedä sen uudelleen Wordiksi.</li>
+      <li><span class="btn">Avaa muokattavaksi</span> palauttaa raportin Tarkastus-välilehdelle. Kun tallennat sen uudelleen, vanha versio korvautuu.</li>
+      <li><span class="btn">&times;</span> tai <span class="btn">Poista</span> poistaa raportin pysyvästi.</li>
+    </ul>
+    <h3>Uusi tarkastus</h3>
+    <p><span class="btn">Uusi</span> aloittaa tyhjän muistion. Tallenna edellinen ensin raportiksi, jos haluat säilyttää sen.</p>
+  </section>
+
+  <section id="ongelmat">
+    <h2>7. Ongelmatilanteet</h2>
+    <table>
+      <tr><td>Ilmoitus: tallennus epäonnistui</td><td>Älä sulje sovellusta. Vie muistio heti Word-tiedostona: Raportit &rarr; Kesken oleva muistio &rarr; Vie Word-tiedostona. Puhelimen muisti voi olla täynnä.</td></tr>
+      <tr><td>Kuva ei lisäänny</td><td>Kohdassa voi olla jo 12 kuvaa. Kokeile myös ottaa kuva uudelleen tai valita se galleriasta.</td></tr>
+      <tr><td>Sovellus näyttää vanhalta päivityksen jälkeen</td><td>Päivitä sivu selaimessa. Tallennetut tiedot säilyvät.</td></tr>
+      <tr><td>Puhelin vaihtuu</td><td>Tiedot eivät siirry itsestään. Tallenna jokainen muistio JSON-tiedostona ja tuo se uudessa puhelimessa: Raportit &rarr; Tuo muistio (.json).</td></tr>
+      <tr><td>Word-tiedostoa ei löydy</td><td>Katso puhelimen <b>Tiedostot</b> &rarr; <b>Lataukset</b>. Sovellus kertoo tiedoston nimen viennin jälkeen.</td></tr>
+    </table>
+  </section>
+
+  <footer>Ins Tsto Kärkimaa Oy &middot; Kuntotarkastusmuistio &middot; ohje päivitetty 14.11.2026</footer>
+</main>
+</body>
+</html>
